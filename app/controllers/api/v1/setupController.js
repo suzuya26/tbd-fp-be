@@ -11,19 +11,13 @@ const dbm = mgClient.db(process.env.MG_DB)
 const detail_collection = dbm.collection('list_detail');
 const photo_collection = dbm.collection('list_photo');
 
-const cassandra = require('cassandra-driver');
-const csClient = new cassandra.Client({
-    cloud: { secureConnectBundle: 'config/secure-connect-list-photo.zip' },
-    credentials: { username: process.env.USER_CS, password: process.env.PW_CS }
-  });
-
   const cloudinary = require('../../../../config/cloudinary');
 
 module.exports = {
     async getAllSetup(req,res){
         try {
             const setup = await db.many('SELECT * FROM setup_desktop ORDER BY id ASC')
-            return res.status(200).json({data: {setup}})
+            return res.status(200).json({data: setup})
         } catch (error) {
             return res.status(500).json({ msg : error.message})
         }
