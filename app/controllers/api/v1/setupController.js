@@ -11,7 +11,11 @@ const dbm = mgClient.db(process.env.MG_DB)
 const detail_collection = dbm.collection('list_detail');
 const photo_collection = dbm.collection('list_photo');
 
-  const cloudinary = require('../../../../config/cloudinary');
+const cloudinary = require('../../../../config/cloudinary');
+
+const neo4j = require('neo4j-driver')
+const driver = neo4j.driver(process.env.NEO4J_URI, neo4j.auth.basic(process.env.NEO4J_USERNAME, process.env.NEO4J_PASSWORD),{ disableLosslessIntegers: true });
+const session = driver.session({ database: 'neo4j' } )
 
 module.exports = {
     async getAllSetup(req,res){
@@ -36,6 +40,13 @@ module.exports = {
 
             const galery = await photo_collection.findOne({_id : ObjectId(setup.list_photo_id.trim())})
             Object.assign(setup,{content_list_photo : galery})
+
+            const getLikeQuery = `match x=()-[r:Suka]->(b:Setup) where b.id_setup = ${setup_id} return count(x) as count`
+            const data_like = await session.executeWrite(tx =>
+              tx.run(getLikeQuery)
+            )
+            const total_like = data_like.records.map(record => record.get('count'))
+            Object.assign(setup,{total_like : parseInt(total_like.toString())})
 
             return res.status(200).json({data: setup})
         } catch (error) {
@@ -99,10 +110,43 @@ module.exports = {
             list_photo_id       : photo_setup.insertedId.toString()
           })
 
+          const writeQuery = `create (a:Setup {id_setup:${new_setup.id}})`
+          const relationshipQuery = `match (a:User), (b:Setup) where a.id_user = ${req.body.user_id} and b.id_setup = ${new_setup.id} create (a)-[r:Pemilik]->(b)`
+          await session.executeWrite(tx =>
+              tx.run(writeQuery)
+            )
+          await session.executeWrite(tx =>
+              tx.run(relationshipQuery)
+            )
+
           return res.status(201).json({msg: "Setup Berhasil ditambahkan" , id : new_setup.id})
         } catch (error) {
           return res.status(500).json({ msg : error.message})
-        }
+        } 
+        // finally {
+        //   await session.close();
+        // }
       },
+      async likeSetup(req,res){
+        try {
+          const checkQuery = `match x=(a:User)-[r:Suka]->(b:Setup) where a.id_user = ${req.body.user_id} and b.id_setup = ${req.body.setup_id} return count(x) as count`
+          const info_like = await session.executeWrite(tx =>
+            tx.run(checkQuery)
+          )
+          const total_like = info_like.records.map(record => record.get('count'))
+
+          if(!parseInt(total_like.toString()) == 0 ){
+            return res.status(403).json({msg: "Sudah Pernah Like"})
+          }
+
+          const likeQuery = `match (a:User),(b:Setup) where a.id_user = ${req.body.user_id} and b.id_setup = ${req.body.setup_id} create (a)-[r:Suka]->(b)`
+          await session.executeWrite(tx =>
+            tx.run(likeQuery)
+          )
+          return res.status(201).json({msg: "Liked"})
+        } catch (error) {
+          return res.status(500).json({ msg : error.message})
+        }
+      }
 }
     
