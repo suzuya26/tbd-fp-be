@@ -1,11 +1,5 @@
-const dotenv = require('dotenv');
-dotenv.config();
-
-const cassandra = require('cassandra-driver');
-const csClient = new cassandra.Client({
-    cloud: { secureConnectBundle: 'config/secure-connect-list-photo.zip' },
-    credentials: { username: process.env.USER_CS, password: process.env.PW_CS }
-});
+const connection = require('../../../../config/connection')
+const csClient = connection.csClient
 
 module.exports = {
     async getAllKategori(req,res){
