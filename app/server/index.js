@@ -5,7 +5,7 @@
  
  const app = express();
 
- const whitelist = ['http://localhost:8000','https://tbd-fp-be-kelompok-3.up.railway.app'] //tambahin nnti web ny pas udah dideploy
+ const whitelist = ['http://localhost:8000','https://tbd-fp-kelompok-3.cyclic.app','http://localhost:5713',] //tambahin nnti web ny pas udah dideploy
  var corsOptions = {
     origin: function (origin, callback) {
         if (whitelist.indexOf(origin) !== -1|| !origin) {
