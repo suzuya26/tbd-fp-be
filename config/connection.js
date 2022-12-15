@@ -26,10 +26,17 @@ const csClient = new cassandra.Client({
     credentials: { username: process.env.USER_CS, password: process.env.PW_CS }
 });
 
+//connect redis
+const Redis = require("ioredis");
+
+let redisClient = new Redis(process.env.REDIS_URL);
+
+
 module.exports = {
     db,
     detail_collection,
     photo_collection,
     session,
     csClient,
+    redisClient,
 }

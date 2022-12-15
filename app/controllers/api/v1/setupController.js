@@ -19,7 +19,7 @@ module.exports = {
     async getSetupById(req,res){
         try {
             const setup_id = req.params.id;
-            let setup = await db.one(`SELECT * FROM setup_desktop WHERE id = ${id}`,
+            let setup = await db.one(`SELECT * FROM setup_desktop WHERE id = ${setup_id}`,
                 {
                     id: setup_id,
                 }
