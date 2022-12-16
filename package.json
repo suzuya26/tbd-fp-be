@@ -5,7 +5,7 @@
   "main": "app/server/index.js",
   "scripts": {
     "start": "node app/server/index.js",
-    "develop": "nodemon -q bin/www",
+    "develop": "nodemon app/server/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
