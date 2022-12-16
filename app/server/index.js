@@ -21,7 +21,7 @@
  }
  
  app.set("trust proxy", 1);
- app.use(cors(corsOptions));
+ app.use(cors());
 
  /** Install request logger */
  app.use(morgan("dev"));
