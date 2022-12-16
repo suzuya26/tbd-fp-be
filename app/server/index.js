@@ -16,7 +16,8 @@
       },
       credentials:true,
       optionSuccessStatus:200,
-      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'device-remember-token', 'Access-Control-Allow-Origin', 'Origin', 'Accept'],
+      method :['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'device-remember-token', 'Access-Control-Allow-Origin', 'Origin', 'Accept','x-client-key', 'x-client-token', 'x-client-secret'],
  }
  
  app.set("trust proxy", 1);
