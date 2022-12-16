@@ -15,7 +15,8 @@
         }
       },
       credentials:true,
-      optionSuccessStatus:200
+      optionSuccessStatus:200,
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'device-remember-token', 'Access-Control-Allow-Origin', 'Origin', 'Accept'],
  }
  
  app.set("trust proxy", 1);
