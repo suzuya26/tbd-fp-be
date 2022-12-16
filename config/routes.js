@@ -12,8 +12,8 @@ apiRouter.get("/api/v1/all-kategori",controllers.api.v1.jenisController.getAllKa
 apiRouter.get('/api/v1/all-item',controllers.api.v1.jenisController.getAllItem);
 apiRouter.get("/api/v1/all-setup",controllers.api.v1.setupController.getAllSetup);
 apiRouter.get("/api/v1/setup/:id",controllers.api.v1.setupController.getSetupById);
-apiRouter.post('/api/v1/upload-setup-photo',requireAuth, uploadOnMemory.single("picture"),controllers.api.v1.setupController.uploadSetupPhoto); //satu photo
-apiRouter.delete('/api/v1/delete-setup-photo',requireAuth,controllers.api.v1.setupController.deleteSetupPhoto);//satu photo
+apiRouter.post('/api/v1/upload-setup-photo', uploadOnMemory.single("picture"),controllers.api.v1.setupController.uploadSetupPhoto); //satu photo
+apiRouter.delete('/api/v1/delete-setup-photo',controllers.api.v1.setupController.deleteSetupPhoto);//satu photo
 apiRouter.post('/api/v1/create-setup',requireAuth,controllers.api.v1.setupController.createSetup);
 apiRouter.post('/api/v1/like-setup',requireAuth,controllers.api.v1.setupController.likeSetup);
 apiRouter.post('/api/v1/hide-setup/:id',requireAuth,controllers.api.v1.setupController.hideSetup);
