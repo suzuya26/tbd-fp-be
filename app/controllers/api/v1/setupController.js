@@ -74,7 +74,7 @@ module.exports = {
             function (err, result) {
               if (!!err) {
                 return res.status(400).json({
-                  message: "Gagal upload file!",
+                  message: err.message,
                 });
               }
               res.status(201).json({
