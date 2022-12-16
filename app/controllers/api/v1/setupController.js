@@ -10,7 +10,7 @@ const session = connection.session
 module.exports = {
     async getAllSetup(req,res){
         try {
-            const setup = await db.many(`SELECT * FROM setup_desktop WHERE status = 'show' ORDER BY id ASC`)
+            const setup = await db.many(`SELECT setup_desktop.*, my_desktop_user.username FROM setup_desktop INNER JOIN my_desktop_user ON setup_desktop.user_id = my_desktop_user.id WHERE status = 'show'`)
             return res.status(200).json({data: setup})
         } catch (error) {
             return res.status(500).json({ msg : error.message})
@@ -19,26 +19,45 @@ module.exports = {
     async getSetupById(req,res){
         try {
             const setup_id = req.params.id;
-            let setup = await db.one(`SELECT * FROM setup_desktop WHERE id = ${setup_id}`,
+            let setup = await db.one(`SELECT setup_desktop.*, my_desktop_user.username FROM setup_desktop INNER JOIN my_desktop_user ON setup_desktop.user_id = my_desktop_user.id WHERE setup_desktop.id = ${setup_id}`,
                 {
                     id: setup_id,
                 }
             )
             
             const detail = await detail_collection.findOne({_id : ObjectId(setup.list_detail_id.trim())})
-            Object.assign(setup,{content_list_detail : detail})
+            // Object.assign(setup,{content_list_detail : detail})
 
-            const galery = await photo_collection.findOne({_id : ObjectId(setup.list_photo_id.trim())})
-            Object.assign(setup,{content_list_photo : galery})
+            const galeries = await photo_collection.findOne({_id : ObjectId(setup.list_photo_id.trim())})
+            // Object.assign(setup,{content_list_photo : galery})
 
             const getLikeQuery = `match x=()-[r:Suka]->(b:Setup) where b.id_setup = ${setup_id} return count(x) as count`
             const data_like = await session.executeWrite(tx =>
               tx.run(getLikeQuery)
             )
             const total_like = data_like.records.map(record => record.get('count'))
-            Object.assign(setup,{total_like : parseInt(total_like.toString())})
+            // Object.assign(setup,{total_like : parseInt(total_like.toString())})
 
-            return res.status(200).json({data: setup})
+            let photo = [setup.main_photo_url]
+            galeries.photo.forEach(galery => {
+              photo.push(galery.url)
+            });
+
+            const response = {
+              data : {
+                id                    : setup.id,
+                user_id               : setup.user_id,
+                type_setup            : setup.type_setup,
+                name_setup            : setup.name_setup,
+                username              : setup.username,
+                content_list_detail   : detail,
+                list_photo            : photo,
+                total_like            : total_like,
+                status                : setup.status,
+              }
+            }
+
+            return res.status(200).json({data: response})
         } catch (error) {
             return res.status(500).json({ msg : error.message})
         }
