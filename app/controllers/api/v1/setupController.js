@@ -52,7 +52,7 @@ module.exports = {
                 username              : setup.username,
                 content_list_detail   : detail,
                 list_photo            : photo,
-                total_like            : total_like,
+                total_like            : parseInt(total_like.toString()),
                 status                : setup.status,
               }
             }
